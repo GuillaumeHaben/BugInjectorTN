@@ -1,0 +1,1 @@
+scanf("Quel est votre age ? %d", &age);

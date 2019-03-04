@@ -1,0 +1,7 @@
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@30:is the function line"{"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@37:vscanf("%d", &age)"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@30:is the function line"{"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@38:vscanf("%d %d", &coucou1, &coucou2)"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@30:is the function line"{"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@43:vfopen("file.txt", "r")"
+/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c@43:tfp = fopen("file.txt", "r")"

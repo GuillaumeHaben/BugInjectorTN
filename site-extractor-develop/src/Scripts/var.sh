@@ -1,0 +1,156 @@
+#!/bin/bash
+#Ce script va permettre de trouver le nom des variables générées grace
+#à un scanf
+
+fileMatcher="@"
+lineMatcher=":"
+fctMatcher="i"
+varMatcher="v"
+scanfmatcher="s"
+fopenmatcher="f"
+fopenvarmatcher="t"
+
+#Si scanf 0, si fopen 1
+fct=-1
+
+eg="="
+count=0
+printed=0
+tokenscanf="&"
+tokenfopen="("
+tokenequal="="
+espace=" "
+par=","
+fin=")"
+temp=0
+temp2=0
+rm -r output.txt
+
+for line in $(cat /root/Desktop/site-extractor-develop/tests/output.txt)
+do
+j=${#line}
+let j--
+for i in `seq 0 $j`
+do
+
+  #Pour récuperer le fichier et la ligne
+  if [ ${line:i:1} = $fileMatcher ]; then
+    temp2=-1
+  fi
+  let temp2++
+
+  if [ ${line:i:1} = $lineMatcher ]; then
+    let i++
+      if [ ${line:$(($i)):1} = $fctMatcher ]; then
+        i=$(($i-temp2))
+        let temp2--
+        echo "" >> output.txt
+        echo "fichier: "${line:0:$(($i-1))} >> output.txt
+        echo "fonction ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+      fi
+
+      #On regarde si c'est bien la récupération d'une variable utilisateur
+      if [ ${line:$(($i)):1} = $varMatcher ]; then
+        #On regarde si c'est le cas scanf
+        if [ ${line:$(($i+1)):1} = $scanfmatcher ]; then
+          i=$(($i-temp2))
+          let temp2--
+          echo "scanf ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+          #On sauvegarde le cas
+          fct=0
+        fi
+    #On regarde si c'est le cas fopen
+        if [ ${line:$(($i+1)):1} = $fopenmatcher ]; then
+          i=$(($i-temp2))
+          let temp2--
+          echo "fopen ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+          #On sauvegarde le cas
+          fct=1
+        fi
+      fi
+    #On regarde si c'est le cas d'une variable implémentée avec un fopen
+    if [ ${line:$(($i)):1} = $fopenvarmatcher ]; then
+      l=$(($i+1))
+      m=$(($i))
+      count=0
+      printed=0
+      while [ $m -lt $j ]; do
+
+        #Ici on cherche le = marquant la fin du nom de la variable de fin
+        if [ "${line:l:1}" = "$tokenequal" ]; then
+          echo "coucou"
+
+          echo "variable: "${line:$(($i+1)):$(($count))} >> output.txt
+          i=$(($m))
+          m=$(($j))
+          let printed++
+        fi
+        let m++
+        let l++
+        let count++
+      done
+      #Si l'utilisateur met un espace entre le nom de sa variable et le = :
+      if [[ "$printed" -eq 0 ]]; then
+        echo "variable: "${line:$(($i+1)):$(($count))} >> output.txt
+        printed=1
+      fi
+    fi
+
+  fi
+
+  #Cas scanf
+  if [ "$fct" -eq "0" ]; then
+    #On regarde quand on trouve &
+    if [ ${line:i:1} = $tokenscanf ]; then
+      l=$(($i+1))
+      m=$(($i))
+      while [ $m -lt $j ]; do
+
+        #Si on a trouvé &, c'est qu'on a potentiellement une variable,
+        #Il faut chercher la fin de la variable, marquée par , ou )
+
+        #Ici on cherche ,
+        if [ "${line:l:1}" = "$par" ]; then
+          echo "variable: "${line:$(($i+1)):$(($m))} >> output.txt
+          i=$(($m))
+          m=$(($j))
+        fi
+
+        #Ici on cherche )
+        if [ "${line:l:1}" = "$fin" ]; then
+          echo "variable: "${line:$(($i+1)):$(($m))} >> output.txt
+        fi
+        let m++
+        let l++
+      done
+
+    fi
+  fi
+
+
+  #Cas fopen
+  if [ "$fct" -eq "1" ] && [ "$printed" -eq "0" ]; then
+    #On regarde quand on trouve &
+    if [ ${line:i:1} = $tokenfopen ]; then
+      l=$(($i+1))
+      m=$(($i))
+      count=0
+      while [ $m -lt $j ]; do
+
+        #Ici on cherche le guilletmet de fin
+        if [ "${line:l:1}" = "$par" ]; then
+          echo "fichier: "${line:$(($i+1)):$(($count))} >> output.txt
+          i=$(($m))
+          m=$(($j))
+        fi
+
+        let m++
+        let l++
+        let count++
+      done
+
+    fi
+  fi
+  let i++
+done
+done
