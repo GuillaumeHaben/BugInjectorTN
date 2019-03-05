@@ -236,15 +236,14 @@ def main():
 
     stri=""
     prof=0
-    JSON={}
+    fun_json=[]
     for f in Funs:
         prof=f[2]
         stri=stri+"function:"+f[0]+"\n"
-        stri=stri+"profondeur:"+str(prof)+"\n"
-        fun_json={"function":f[0],"profondeur":prof}
+        stri=stri+"depth:"+str(prof)+"\n"
+        vars=[]
         for v in f[1]:
-            var_json={"name:":v}
-            stri=stri+"variable:"+v+"\nlignes:{"
+            stri=stri+"variable:"+v+"\nlines:{"
             trace = get_trace(f[0],v,tab_fun)
             lines=[]
             if(len(trace[0])!=0):
@@ -254,8 +253,8 @@ def main():
                 stri=stri+str(l)+","
                 lines.append(l)
             stri=stri[0:-1]+"}\n"
-            var_json
-            attention ici ca risque de pas marcher
+            vars.append({"name":v,"lines":lines})
+        fun_json.append({"function":f[0],"depth":prof,"variable":vars})
         stri=stri+"\n"
     print "\n\n\n\n"+stri
 
@@ -263,6 +262,7 @@ def main():
     JSON["test3"]=3
     dic={"bite":4}
     JSON["test4"]=dic"""
+    JSON={"data":fun_json}
     JSON_F = open("output_trace.json","w")
     JSON_F.write(json.dumps(JSON))
 
@@ -271,4 +271,3 @@ def main():
     F.close()
 
 main()
-
