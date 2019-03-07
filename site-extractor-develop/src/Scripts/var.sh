@@ -24,9 +24,9 @@ par=","
 fin=")"
 temp=0
 temp2=0
-rm -r output.txt
-
-for line in $(cat /root/Desktop/site-extractor-develop/tests/output.txt)
+rm -r output
+echo "{" >> output
+for line in $(cat /root/Desktop/BugInjectorTN/site-extractor-develop/tests/output.txt)
 do
 j=${#line}
 let j--
@@ -44,9 +44,9 @@ do
       if [ ${line:$(($i)):1} = $fctMatcher ]; then
         i=$(($i-temp2))
         let temp2--
-        echo "" >> output.txt
-        echo "fichier: "${line:0:$(($i-1))} >> output.txt
-        echo "fonction ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+        #echo ";" >> output.txt
+        echo '"fichier":"'${line:0:$(($i-1))}'",' >> output
+        echo '"fonction ligne":"'${line:$(($i)):$(($temp2))}'",' >> output
       fi
 
       #On regarde si c'est bien la récupération d'une variable utilisateur
@@ -55,7 +55,7 @@ do
         if [ ${line:$(($i+1)):1} = $scanfmatcher ]; then
           i=$(($i-temp2))
           let temp2--
-          echo "scanf ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+          echo '"scanf ligne":"'${line:$(($i)):$(($temp2))}'",'>> output
           #On sauvegarde le cas
           fct=0
         fi
@@ -63,7 +63,7 @@ do
         if [ ${line:$(($i+1)):1} = $fopenmatcher ]; then
           i=$(($i-temp2))
           let temp2--
-          echo "fopen ligne: "${line:$(($i)):$(($temp2))} >> output.txt
+          echo '"fopen ligne":"'${line:$(($i)):$(($temp2))}'",' >> output
           #On sauvegarde le cas
           fct=1
         fi
@@ -78,9 +78,7 @@ do
 
         #Ici on cherche le = marquant la fin du nom de la variable de fin
         if [ "${line:l:1}" = "$tokenequal" ]; then
-          echo "coucou"
-
-          echo "variable: "${line:$(($i+1)):$(($count))} >> output.txt
+          echo '"variable":"'${line:$(($i+1)):$(($count))}'",' >> output
           i=$(($m))
           m=$(($j))
           let printed++
@@ -91,7 +89,7 @@ do
       done
       #Si l'utilisateur met un espace entre le nom de sa variable et le = :
       if [[ "$printed" -eq 0 ]]; then
-        echo "variable: "${line:$(($i+1)):$(($count))} >> output.txt
+        echo '"variable":"'${line:$(($i+1)):$(($count))}'",' >> output
         printed=1
       fi
     fi
@@ -111,14 +109,14 @@ do
 
         #Ici on cherche ,
         if [ "${line:l:1}" = "$par" ]; then
-          echo "variable: "${line:$(($i+1)):$(($m))} >> output.txt
+          echo '"variable":"'${line:$(($i+1)):$(($m))}'",' >> output
           i=$(($m))
           m=$(($j))
         fi
 
         #Ici on cherche )
         if [ "${line:l:1}" = "$fin" ]; then
-          echo "variable: "${line:$(($i+1)):$(($m))} >> output.txt
+          echo '"variable":"'${line:$(($i+1)):$(($m))}'",' >> output
         fi
         let m++
         let l++
@@ -139,7 +137,7 @@ do
 
         #Ici on cherche le guilletmet de fin
         if [ "${line:l:1}" = "$par" ]; then
-          echo "fichier: "${line:$(($i+1)):$(($count))} >> output.txt
+          echo '"fichier":'${line:$(($i+1)):$(($count))}',' >> output
           i=$(($m))
           m=$(($j))
         fi
@@ -154,3 +152,8 @@ do
   let i++
 done
 done
+
+sed '$ s/.$//' output > output2
+echo "}" >> output2
+
+tr -d '\n' < output2 > output.json
