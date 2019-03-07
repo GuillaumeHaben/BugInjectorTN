@@ -1,5 +1,6 @@
 from joern.all import JoernSteps
 import json
+import unicodedata
 
 j = JoernSteps()
 
@@ -205,7 +206,6 @@ def get_fun_vars():
     for l in F.readlines():
         if len(l)>8 and l[0:8]=="fonction":
             line=(l.split(':'))[1]
-            print l
             fun=get_fun_with_line(line)
             fun_line=int(line[1:-1])
             var = True
@@ -224,8 +224,21 @@ def get_fun_vars():
     print FUNs
     return FUNs
 
+def get_fun_vars_json():
+    FUNs=[]
+    F = open("output.json","r").read()
+    data = json.loads(F)
+    vars = data["data"]
+    for v in vars:
+        fun_line=int(v["fonction ligne"])
+        fun_name=get_fun_with_line(fun_line)
+        prof=0
+        name=unicodedata.normalize('NFKD', v["variable"]).encode('ascii','ignore')
+        FUNs.append([fun_name,[name],0,fun_line])
+    return FUNs
+
 def main():
-    Funs = get_fun_vars()
+    Funs = get_fun_vars_json()
     tab_fun = []
     functions =  j.runGremlinQuery('getFunctionsByName("*")')
     for f in functions:
@@ -271,3 +284,4 @@ def main():
     F.close()
 
 main()
+
