@@ -1,16 +1,24 @@
-{
-"fichier":"/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c",
-"fonction ligne":"30",
-"scanf ligne":"37",
-"variable":"age",
-"fichier":"/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c",
-"fonction ligne":"30",
-"scanf ligne":"38",
-"variable":"coucou1",
-"variable":"coucou2",
-"fichier":"/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/test_fopen.c",
-"fonction ligne":"30",
-"fopen ligne":"43",
-"fichier":"file.txt",
-"variable":"fp"
+{"data": [
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/input.c",
+"function line": "18",
+"scanf ligne": "28",
+"variable": "age2"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/input.c",
+"function line": "18",
+"scanf ligne": "29",
+"variable": "age3"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/input.c",
+"function line": "18",
+"scanf ligne": "30",
+"variable": "coucou12"}
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/input.c",
+"function line": "18",
+"scanf ligne": "30",
+"variable": "coucou22"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/input.c",
+"function line": "18",
+"fopen line": "25",
+"file": "test.txt",
+"variable": "fichier"
+}]
 }

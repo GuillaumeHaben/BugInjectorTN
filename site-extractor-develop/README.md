@@ -20,7 +20,7 @@ Run the following command to build the project:
 $ cd /clang-llvm/build
 $ ninja satese
 ```
-Link the binary to its proper location to avoid include failures during the execution: `ln -n /clang-llvm/build/bin/satese /usr/local/bin/satese`
+Link the binary to its proper location to avoid include failures during the execution: `ln -s /clang-llvm/build/bin/satese /usr/local/bin/satese`
 
 #### Usage
 ###### SATESE on a single file
