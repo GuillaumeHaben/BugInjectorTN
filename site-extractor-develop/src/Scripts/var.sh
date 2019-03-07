@@ -165,4 +165,9 @@ echo "}]" >> output2
 echo "}" >> output2
 
 cat output2 > output.json
+
+rm -r output
+rm -r output2
+rm -r outputtemp
+
 #tr -d '\n' < output2 > output.json
