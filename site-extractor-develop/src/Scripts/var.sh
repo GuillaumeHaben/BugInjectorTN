@@ -18,6 +18,7 @@ printed=0
 tokenscanf="&"
 tokenfopen="("
 tokenequal="="
+tokenguillemet='"'
 espace=" "
 par=","
 fin=")"
@@ -54,6 +55,7 @@ do
         rm -r outputtemp
         echo '{"file": "'${line:0:$(($i-1))}'",' >> output
         echo '"function line": "'${line:$(($i)):$(($temp2))}'",' >> output
+        printed=0
 #We are saving in two different files. The second one is temporary,
 #to save the line and the file path in case there is more than one variable on the same line
         echo '{"file": "'${line:0:$(($i-1))}'",' >> outputtemp
@@ -91,7 +93,7 @@ do
 
         #Looking for the token corresponding to the end of the variable name '='
         if [ "${line:l:1}" = "$tokenequal" ]; then
-          echo '"variable": "'${line:$(($i+1)):$(($count))}'",' >> output
+          echo '"variable": "'${line:$(($i+1)):$(($count))}'"}' >> output
           i=$(($m))
           m=$(($j))
           let printed++
@@ -109,14 +111,25 @@ do
     #Token corresponding to the beginning of the varaible name '&'
     if [ ${line:i:1} = $tokenscanf ]; then
       l=$(($i+1))
-      m=$(($i))
+      m=0
+
       while [ $m -lt $j ]; do
 
         #The end of the variable is ',' or '('
 
         #Looking for ','
-        if [ "${line:l:1}" = "$par" ]; then
+        #Case scanf
+        if [ "${line:l:1}" = "," ] && [ "$fct" -eq "0" ]; then
           echo '"variable": "'${line:$(($i+1)):$(($m))}'"}' >> output
+          printed=0
+          cat outputtemp >> output
+          i=$(($m))
+          m=$(($j))
+        fi
+        #Case fopen
+        if [ "${line:l:1}" = "$par" ] && [ "$fct" -eq "1" ]; then
+          echo '"variable": "'${line:$(($i+1)):$(($m))}'""}' >> output
+          printed=0
           cat outputtemp >> output
           i=$(($m))
           m=$(($j))
@@ -125,6 +138,7 @@ do
         #Looking for ')'
         if [ "${line:l:1}" = "$fin" ]; then
           echo '"variable": "'${line:$(($i+1)):$(($m))}'"},' >> output
+          printed=0
         fi
         let m++
         let l++
@@ -145,7 +159,11 @@ do
 
         #Looking for the ',' corresponding to the end of the file name
         if [ "${line:l:1}" = "$par" ]; then
-          echo '"file": '${line:$(($i+1)):$(($count))}',' >> output
+          if [ ${line:$(($i+1)):1} = $tokenguillemet ]; then
+            echo '"file": '${line:$(($i+1)):$(($count))}',' >> output
+          else
+            echo '"file": "'${line:$(($i+1)):$(($count))}'",' >> output
+          fi
           i=$(($m))
           m=$(($j))
         fi
