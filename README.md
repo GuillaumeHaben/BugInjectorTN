@@ -48,6 +48,7 @@ Redirect the exit inside an output file in the same folder by adding
 
 * ` > output.txt` at the end of the previous command
 
+--------------------------------------
 ##On a project
 You need to compile your project with bear option to generate a `compile_database.json` file that will allow the site extractor to run through all the project.
 Example with Wireshark:
