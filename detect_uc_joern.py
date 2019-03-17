@@ -13,8 +13,9 @@ j.connectToDatabase()
 
 #get the array containing all the data of a node
 def get_opt(node):
-    opt = (node.split('{'))[1]
-    opt = (opt.split('}'))[0]
+    place = node.find('{')
+    opt=node[place+1:]
+    opt=opt[:-3]
     opts = []
     code=""
     c=False
@@ -30,7 +31,6 @@ def get_opt(node):
                 opts.append(i)
             else:
                 code=code+","+i
-
         else:
             opts.append(i)
     return opts
@@ -117,7 +117,6 @@ def test_var_is_in_code(code,var):
 def get_trace(fun,var,reste_fun):
     fun_id = get_fun_id(fun)
     reste_fun = get_reste_fun(reste_fun,fun_id)
-    #print "\n\n"
     list_fun_trace=[]
     list_lines = []
     res = j.runGremlinQuery("g.V()")
