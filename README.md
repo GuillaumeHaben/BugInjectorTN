@@ -67,3 +67,52 @@ And run the script:
 * `./var.sh`
 
 You will get an output name `output.json` You should open it to check if there is not any problems (for instance a '{' missing)
+
+
+
+##JOERN - module 2
+
+###setup joern
+
+First, add the image neepl/joern to your docker : https://hub.docker.com/r/neepl/joern/
+
+Create a folder where you will put your code, here it will be joern9
+
+Put the code that you want to analyze in it
+
+Launch the following command (adapt the path to your folder)
+* `sudo docker run --name joern-construct -v /path/to/your/folder:/code -p 7474:7474 -p 7687:7687 --rm -w /code -it neepl/joern java -jar /joern/bin/joern.jar .`
+
+The database for joern is now created, we will create the container that we will work with.
+
+--------------------------------------
+
+Launch the following command to create the container :
+* `sudo docker run --name joern-run -v /path/to/your/folder:/code -p 7474:7474 -p 7687:7687 -it neepl/joern /var/lib/neo4j/bin/neo4j console`
+
+When you see the line `Remote interface ready and available at ...` the container is successfully launched and fonctionnal
+You can now stop the container with CTRL+C
+
+You have now a working container with joern and neo4j running on it, you can start and stop it as usual.
+
+####Some commands : 
+Launch the container :
+	sudo docker start joern-run
+Enter in the container :
+	sudo docker exec -it joern-run /bin/bash
+Stop the container :
+	sudo docker stop joern-run
+
+--------------------------------------
+
+###Use the joern UC variables detection script
+
+First you should put the python script in your “/code” folder.
+You should also put the output.json from the clang UC variables detection script in your “/code” folder.
+As a reminder, the “/code” folder is the folder where you did put the C code where you want to inject vulnerabilities.
+
+You can now (in the joern container) launch the command `python script.py` in the “/code” folder.
+
+It will generate all the outputs for the next module.
+
+

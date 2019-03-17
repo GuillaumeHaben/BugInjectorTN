@@ -1,3 +1,5 @@
+#Code by Julien BATAILLE for an industral project of Telecom Nancy (NIST - SAMATE)
+
 from joern.all import JoernSteps
 import json
 import unicodedata
@@ -6,19 +8,10 @@ j = JoernSteps()
 
 j.setGraphDbURL('http://localhost:7474/db/data/')
 
-# j.addStepsDir('Use this to inject utility traversals')
 
 j.connectToDatabase()
 
-#res =  j.runGremlinQuery('getFunctionsByName("main")')
-#res = j.runGremlinQuery('getFunctionsByName("m*")')
-#res = j.runGremlinQuery('getFunctionsByParameter("*r*")')
-#on peut aussi faire .id par exemple a la fin pour avoir juste un truc
-#res = j.runGremlinQuery('getCallsTo("memcpy").functions()')
-#res = j.runGremlinQuery('g.v(0).out()')
-#res = j.runGremlinQuery('getCallsTo("error")')
-
-#sert a obtenir un tableau contenant les informations d'un noeud
+#get the array containing all the data of a node
 def get_opt(node):
     opt = (node.split('{'))[1]
     opt = (opt.split('}'))[0]
@@ -26,11 +19,11 @@ def get_opt(node):
     code=""
     c=False
     for i in opt.split(','):
-        if i.find("code")!=-1:
+        if i.find("code:")!=-1:
             code=i
             c=True
         elif c:
-            if i.find("functionId")!=-1:
+            if i.find("functionId:")!=-1:
                 c=False
                 opts.append(code)
                 code=""
@@ -42,12 +35,12 @@ def get_opt(node):
             opts.append(i)
     return opts
 
-#set a recuperer l'id d'un noeud
+#get the id of a node
 def get_id(s):
     s1 = (s.split('{'))[0][2:-1]
     return s1
 
-#sert a recuperer l'id d'une fonction via son nom
+#get the id of a function with it name
 def get_fun_id(fun):
     res = j.runGremlinQuery("g.V().has('type','Function').has('name','"+fun+"')")
     for r in res:
@@ -56,8 +49,7 @@ def get_fun_id(fun):
         return get_id(str(r))
     return "0"
 
-#retourne les fonctions restantes a analyser
-#dans les faits, on prend en argument la liste des fonctions du prg, et on en retire la fonction dans laquelle on est
+#get the functions that are not analyzed yet
 def get_reste_fun(tab,funid):
     t = []
     for i in tab:
@@ -65,7 +57,7 @@ def get_reste_fun(tab,funid):
             t.append(i)
     return t
 
-#sert a recuperer les fils d'un noeud
+#get the sons of a node
 def get_sons(id):
     res = j.runGremlinQuery("g.v("+str(id)+").out()")
     ret = []
@@ -73,7 +65,7 @@ def get_sons(id):
         ret.append(str(r))
     return ret
 
-#sert a recuperer le numero de l'argument d'une fonction, exemple f(a,b), nb de b : 1
+#get the number of the argument of a function, example : f(a,b), number of b : 1
 def get_arg_number(code, var):
     if code.find(',')==-1:
         return "0"
@@ -86,7 +78,7 @@ def get_arg_number(code, var):
             if j==var:
                 return str(i)
 
-#sert a recuperer le nom d'un argument de function dans la fonction a partir de son numero d'argument
+#get the name of the argument of a function with it number of argument
 def get_arg_name(f,num):
     res = j.runGremlinQuery("g.V().has('type','Function').has('name','"+f+"')")
     node="0"
@@ -104,7 +96,7 @@ def get_arg_name(f,num):
         return name
     return "none"
 
-#test si une variable est presente dans un code de format : "code C"
+#test if a variable is in the code with the format  : "code C"
 def test_var_is_in_code(code,var):
     nb = code.count(var)
     if nb==0:
@@ -120,11 +112,9 @@ def test_var_is_in_code(code,var):
             code=code.replace(var,"_",1)
     return False
 
-#sert a recuperer la "trace" d'une variable dans une fonction
-#une trace a le format suivant : [(fonction,nom_arg_in_fun),...][ligne_var_use1,...]
+#get the "trace" of a variable in a function
+#a "trace" has the following patern : [(function,name_arg_in_fun),...][line_var_use1,...]
 def get_trace(fun,var,reste_fun):
-    """print "-----------------"
-    print fun + ":" + var"""
     fun_id = get_fun_id(fun)
     reste_fun = get_reste_fun(reste_fun,fun_id)
     #print "\n\n"
@@ -160,13 +150,11 @@ def get_trace(fun,var,reste_fun):
                             c= (c.split(" "))[1]
                         if c.find(var)==-1:
                             list_fun_trace.append((fun,c))
-    """print list_fun_trace
-    print list_lines"""
     return (list_fun_trace,list_lines)
 
-#PB : si y a un string qui contient le nom de la variable, ba on va matcher aussi cette ligne
+#PB : if a string contains the name of the variable, we will match that line too
 
-#recupere le nom d'une fonction a partir de sa ligne
+#get the name of a function with it line
 def get_fun_with_line(line):
     res = j.runGremlinQuery("g.V().has('type','Function')")
     for r in res:
@@ -180,7 +168,7 @@ def get_fun_with_line(line):
                 fun_name = (((((s[l:]).split(','))[0]).split(":"))[1])[1:-1]
                 return fun_name
 
-#recupere la ligne d'une fonction a partir de son nom
+#get the line of a function with it name
 def get_fun_with_line(line):
     res = j.runGremlinQuery("g.V().has('type','Function')")
     for r in res:
@@ -194,7 +182,15 @@ def get_fun_with_line(line):
                 fun_name = (((((s[l:]).split(','))[0]).split(":"))[1])[1:-1]
                 return fun_name
 
-#recupere les differentes variables UC ainsi que leur fonction
+#not finished, get the name of the file of the function
+def get_fun_file(node):
+    res = j.runGremlinQuery('g.v('+str(node)+').in()')
+    file = "None"
+    for r in file:
+        s = str(r)
+    return file
+
+#get the UC variable and there function stored in a json format
 def get_fun_vars():
     FUNs=[]
     funs=[]
@@ -210,10 +206,6 @@ def get_fun_vars():
             fun_line=int(line[1:-1])
             var = True
             FUNs.append([fun,[],0,fun_line])
-            """if(fun not in funs):
-                FUNs.append([fun,[],0,line[1:-2]])
-                funs.append(fun)
-                i+=1"""
         if len(l)>8 and l[0:8]=="variable":
             if var:
                 FUNs[i][1].append(((l.split(':'))[1])[1:-1])
@@ -221,16 +213,16 @@ def get_fun_vars():
             else:
                 FUNs.append([fun,[],0,fun_line])
                 FUNs[i][1].append(((l.split(':'))[1])[1:-1])
-    print FUNs
     return FUNs
 
+#get the UC variable and there function stored in a json format
 def get_fun_vars_json():
     FUNs=[]
     F = open("output.json","r").read()
     data = json.loads(F)
     vars = data["data"]
     for v in vars:
-        fun_line=int(v["fonction ligne"])
+        fun_line=int(v["function line"])
         fun_name=get_fun_with_line(fun_line)
         prof=0
         name=unicodedata.normalize('NFKD', v["variable"]).encode('ascii','ignore')
@@ -247,11 +239,15 @@ def main():
         s1=s1[1:-1]
         tab_fun.append((s1,get_fun_id(s1)))
 
+    print "Step 1 done"
+
     stri=""
     prof=0
     fun_json=[]
     for f in Funs:
         prof=f[2]
+        if prof>50:
+            break
         stri=stri+"function:"+f[0]+"\n"
         stri=stri+"depth:"+str(prof)+"\n"
         vars=[]
@@ -267,21 +263,14 @@ def main():
                 lines.append(l)
             stri=stri[0:-1]+"}\n"
             vars.append({"name":v,"lines":lines})
-        fun_json.append({"function":f[0],"depth":prof,"variable":vars})
+        fun_json.append({"function":f[0],"depth":prof,"variable":vars,"file":get_fun_file(get_fun_id(f[0]))})
         stri=stri+"\n"
-    print "\n\n\n\n"+stri
+    print "Step 2 done"
+    print "\n\n"+stri+"\n\n"
 
-    """JSON={"test":1,"test2":"2"}
-    JSON["test3"]=3
-    dic={"bite":4}
-    JSON["test4"]=dic"""
     JSON={"data":fun_json}
     JSON_F = open("output_trace.json","w")
     JSON_F.write(json.dumps(JSON))
-
-    F = open("output_trace.txt","w")
-    F.write(stri)
-    F.close()
+    JSON_F.close()
 
 main()
-
