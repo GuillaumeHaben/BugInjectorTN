@@ -1,0 +1,20 @@
+{"data": [
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/prgm_test.c",
+"function line": "51",
+"scanf ligne": "58",
+"variable": "age"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/prgm_test.c",
+"function line": "51",
+"scanf ligne": "59",
+"variable": "coucou1"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/prgm_test.c",
+"function line": "51",
+"scanf ligne": "59",
+"variable": "coucou2"},
+{"file": "/clang-llvm/build/../llvm/tools/clang/tools/extra/satese/tests/prgm_test.c",
+"function line": "51",
+"fopen line": "63",
+"file": "file.txt",
+"variable": "fp"
+}]
+}
