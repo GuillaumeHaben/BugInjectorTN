@@ -58,7 +58,7 @@ $ cd your/project
 $ ./configure --disable-wireshark --disable-glibtest --disable-dftest CC=clang # Using Clang as compiler
 $ bear make -j 6 # To run on 6 cores
 $ cd clang-llvm/build
-$ satese -b your/project/compile_commands.json -a 2>/dev/null
+$ satese -b your/project/compile_commands.json -a 2>/dev/null```
 
 --------------------------------------
 
