@@ -50,6 +50,7 @@ Redirect the exit inside an output file in the same folder by adding
 
 --------------------------------------
 ##On a project
+
 You need to compile your project with bear option to generate a `compile_database.json` file that will allow the site extractor to run through all the project.
 Example with Wireshark:
 ```sh
@@ -58,6 +59,7 @@ $ ./configure --disable-wireshark --disable-glibtest --disable-dftest CC=clang #
 $ bear make -j 6 # To run on 6 cores
 $ cd clang-llvm/build
 $ satese -b your/project/compile_commands.json -a 2>/dev/null
+
 --------------------------------------
 
 Open a new command line and go to `path-to-site-extractor/site-extractor-develop/src/Scripts`
