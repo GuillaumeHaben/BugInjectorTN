@@ -120,7 +120,7 @@ do
         #Looking for ','
         #Case scanf
         if [ "${line:l:1}" = "," ] && [ "$fct" -eq "0" ]; then
-          echo '"variable": "'${line:$(($i+1)):$(($m))}'"}' >> output
+          echo '"variable": "'${line:$(($i+1)):$(($m))}'"},' >> output
           printed=0
           cat outputtemp >> output
           i=$(($m))
