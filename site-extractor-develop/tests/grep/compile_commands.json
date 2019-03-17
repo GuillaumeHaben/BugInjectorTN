@@ -1,0 +1,37 @@
+[
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o dfa.o dfa.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/dfa.c"
+}
+,
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o grep.o grep.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/grep.c"
+}
+,
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o kwset.o kwset.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/kwset.c"
+}
+,
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o obstack.o obstack.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/obstack.c"
+}
+,
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o regex.o regex.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/regex.c"
+}
+,
+{
+  "directory": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep",
+  "command": "clang -c -D GREP -D STDC_HEADERS -D HAVE_STRING_H -D HAVE_SYS_PARAM_H -D HAVE_UNISTD_H -D HAVE_ALLOCA_H -D HAVE_GETPAGESIZE -D HAVE_MEMCHR -D HAVE_STRERROR -D HAVE_VALLOC -D HAVE_WORKING_MMAP -D LINUX -D _GNU_SOURCE -std=c99 -o search.o search.c",
+  "file": "/clang-llvm/llvm/tools/clang/tools/extra/satese/tests/grep/search.c"
+}
+]

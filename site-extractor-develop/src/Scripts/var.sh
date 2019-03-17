@@ -1,6 +1,5 @@
 #!/bin/bash
-#Ce script va permettre de trouver le nom des variables générées grace
-#à un scanf
+#Find the name of variable, generated with a fopen or a scanf
 
 fileMatcher="@"
 lineMatcher=":"
@@ -10,7 +9,7 @@ scanfmatcher="s"
 fopenmatcher="f"
 fopenvarmatcher="t"
 
-#Si scanf 0, si fopen 1
+#Will change this value: 0 if scanf, 1 if fopen
 fct=-1
 
 eg="="
@@ -24,56 +23,65 @@ par=","
 fin=")"
 temp=0
 temp2=0
-rm -r output
+echo '' > outputtemp
+
 echo '{"data": [' >> output
-for line in $(cat /root/Desktop/BugInjectorTN/site-extractor-develop/tests/output.txt)
+#Deleting the spaces, that scripting isn't working well with
+sed -e "s/ //g" /root/Desktop/BugInjectorTN/site-extractor-develop/tests/output.txt > /root/Desktop/BugInjectorTN/site-extractor-develop/tests/outputtemp
+#Deleting '*', that are not working well with script (need to make more tests to know if this won't create problems with pointers but for now it is working)
+sed -e "s/*//g" /root/Desktop/BugInjectorTN/site-extractor-develop/tests/outputtemp > /root/Desktop/BugInjectorTN/site-extractor-develop/tests/output
+rm -r /root/Desktop/BugInjectorTN/site-extractor-develop/tests/outputtemp
+#Path to the output file of Clang
+for line in $(cat /root/Desktop/BugInjectorTN/site-extractor-develop/tests/output)
 do
 j=${#line}
 let j--
 for i in `seq 0 $j`
 do
 
-  #Pour récuperer le fichier et la ligne
+  #To get the file path
   if [ ${line:i:1} = $fileMatcher ]; then
     temp2=-1
   fi
   let temp2++
 
+  #To get the line
   if [ ${line:i:1} = $lineMatcher ]; then
     let i++
       if [ ${line:$(($i)):1} = $fctMatcher ]; then
         i=$(($i-temp2))
         let temp2--
         rm -r outputtemp
-        #echo ";" >> output.txt
         echo '{"file": "'${line:0:$(($i-1))}'",' >> output
         echo '"function line": "'${line:$(($i)):$(($temp2))}'",' >> output
-
+#We are saving in two different files. The second one is temporary,
+#to save the line and the file path in case there is more than one variable on the same line
         echo '{"file": "'${line:0:$(($i-1))}'",' >> outputtemp
         echo '"function line": "'${line:$(($i)):$(($temp2))}'",' >> outputtemp
       fi
 
-      #On regarde si c'est bien la récupération d'une variable utilisateur
+      #Looking for the token defined in the matcher
       if [ ${line:$(($i)):1} = $varMatcher ]; then
-        #On regarde si c'est le cas scanf
+        #scanf case
         if [ ${line:$(($i+1)):1} = $scanfmatcher ]; then
           i=$(($i-temp2))
           let temp2--
           echo '"scanf ligne": "'${line:$(($i)):$(($temp2))}'",'>> output
           echo '"scanf ligne": "'${line:$(($i)):$(($temp2))}'",'>> outputtemp
-          #On sauvegarde le cas
+          #We save that it's scanf
           fct=0
         fi
-    #On regarde si c'est le cas fopen
+    #fopen case
         if [ ${line:$(($i+1)):1} = $fopenmatcher ]; then
           i=$(($i-temp2))
           let temp2--
           echo '"fopen line": "'${line:$(($i)):$(($temp2))}'",' >> output
-          #On sauvegarde le cas
+          #Save
           fct=1
         fi
       fi
-    #On regarde si c'est le cas d'une variable implémentée avec un fopen
+    #Looking for the token corresponding to the variable (in the matcher)
+    #It's the beginning of the variable name
     if [ ${line:$(($i)):1} = $fopenvarmatcher ]; then
       l=$(($i+1))
       m=$(($i))
@@ -81,7 +89,7 @@ do
       printed=0
       while [ $m -lt $j ]; do
 
-        #Ici on cherche le = marquant la fin du nom de la variable de fin
+        #Looking for the token corresponding to the end of the variable name '='
         if [ "${line:l:1}" = "$tokenequal" ]; then
           echo '"variable": "'${line:$(($i+1)):$(($count))}'",' >> output
           i=$(($m))
@@ -92,27 +100,21 @@ do
         let l++
         let count++
       done
-      #Si l'utilisateur met un espace entre le nom de sa variable et le = :
-      if [[ "$printed" -eq 0 ]]; then
-        echo '"variable": "'${line:$(($i+1)):$(($count))}'",' >> output
-        printed=1
-      fi
     fi
 
   fi
 
-  #Cas scanf
+  #Scanf case
   if [ "$fct" -eq "0" ]; then
-    #On regarde quand on trouve &
+    #Token corresponding to the beginning of the varaible name '&'
     if [ ${line:i:1} = $tokenscanf ]; then
       l=$(($i+1))
       m=$(($i))
       while [ $m -lt $j ]; do
 
-        #Si on a trouvé &, c'est qu'on a potentiellement une variable,
-        #Il faut chercher la fin de la variable, marquée par , ou )
+        #The end of the variable is ',' or '('
 
-        #Ici on cherche ,
+        #Looking for ','
         if [ "${line:l:1}" = "$par" ]; then
           echo '"variable": "'${line:$(($i+1)):$(($m))}'"}' >> output
           cat outputtemp >> output
@@ -120,7 +122,7 @@ do
           m=$(($j))
         fi
 
-        #Ici on cherche )
+        #Looking for ')'
         if [ "${line:l:1}" = "$fin" ]; then
           echo '"variable": "'${line:$(($i+1)):$(($m))}'"},' >> output
         fi
@@ -132,16 +134,16 @@ do
   fi
 
 
-  #Cas fopen
+  #fopen case
   if [ "$fct" -eq "1" ] && [ "$printed" -eq "0" ]; then
-    #On regarde quand on trouve &
+    #Looking for the '(' in fopen(...) corresponding to the beginning of the file name
     if [ ${line:i:1} = $tokenfopen ]; then
       l=$(($i+1))
       m=$(($i))
       count=0
       while [ $m -lt $j ]; do
 
-        #Ici on cherche le guilletmet de fin
+        #Looking for the ',' corresponding to the end of the file name
         if [ "${line:l:1}" = "$par" ]; then
           echo '"file": '${line:$(($i+1)):$(($count))}',' >> output
           i=$(($m))
@@ -159,6 +161,7 @@ do
 done
 done
 
+#Format changes to look like a Json file
 sed '$ s/.$//' output > output2
 sed '$ s/.$//' output > output2
 echo "}]" >> output2
@@ -166,6 +169,7 @@ echo "}" >> output2
 
 cat output2 > output.json
 
+#Cleaning the folder
 rm -r output
 rm -r output2
 rm -r outputtemp

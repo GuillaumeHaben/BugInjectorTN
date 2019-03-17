@@ -9,9 +9,9 @@ using namespace clang::ast_matchers;
 void
 InputMatcher::registerASTMatcherCallback(MatchFinder &finder)
 {
+
+  // Scanf matcher
   finder.addMatcher(
-  //functionDecl(
-    //has(
       compoundStmt(
         forEachDescendant(
           callExpr(
@@ -26,14 +26,11 @@ InputMatcher::registerASTMatcherCallback(MatchFinder &finder)
             )
         ).bind("scan")
       )
-  //  )
-  //)
-
-      ).bind("while-null-pointer"),
+      ).bind("function-line"),
     this);
+
+  //fopen matcher
     finder.addMatcher(
-  //  declRefExpr(
-      //hasDescendant(
         compoundStmt(
           forEachDescendant(
             binaryOperator(
@@ -50,24 +47,24 @@ InputMatcher::registerASTMatcherCallback(MatchFinder &finder)
               )
           ).bind("fopen")
         )
-      ).bind("coucou")
+      ).bind("fopenvarname")
       )
-//      )
-  //  )
-
-        ).bind("while-null-pointer"),
+    ).bind("function-line"),
       this);
   }
+
+  //Add you matcher here
 
 void
 InputMatcher::run(const MatchFinder::MatchResult &result)
 {
-  if (const Stmt *stmt = result.Nodes.getNodeAs<Stmt>("while-null-pointer")) {
+  if (const Stmt *stmt = result.Nodes.getNodeAs<Stmt>("function-line")) {
     std::string descr = "is the function line\"";
 
     Matcher::print(result, stmt, descr);
   }
   if (const Stmt *stmt = result.Nodes.getNodeAs<Stmt>("scan")) {
+    //Token for the script to know the function (scanf, fopen, ...) will be given just after
     std::string descr = "v";
 
     Matcher::print(result, stmt, descr);
@@ -77,9 +74,13 @@ InputMatcher::run(const MatchFinder::MatchResult &result)
 
     Matcher::print(result, stmt, descr);
   }
-  if (const Stmt *stmt = result.Nodes.getNodeAs<Stmt>("coucou")) {
+  if (const Stmt *stmt = result.Nodes.getNodeAs<Stmt>("fopenvarname")) {
+    //Token for the script: the following will give the VAR in VAR = fopen(...)
     std::string descr = "t";
 
     Matcher::print(result, stmt, descr);
   }
+
+  //Add your printer here, with the token (a new one if necessary)
+
 }
