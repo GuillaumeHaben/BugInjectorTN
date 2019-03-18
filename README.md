@@ -117,4 +117,11 @@ You can now (in the joern container) launch the command `python script.py` in th
 
 It will generate all the outputs for the next module.
 
+###DataValue - module 3
+First you need to be sure that you have in your directory the output_trace.json file then you run getDataValue.py.
+You need to have compiled thr program you want to analyze with -g .
+Finally you run gdb with the sript getDataValue generated called dataValue.sh with the command
+*   gdb programToAnalyze -x dataValue.sh
+after that you will just have to press enter and let the script execute the command and you observe the value of the user control data.
+
 
