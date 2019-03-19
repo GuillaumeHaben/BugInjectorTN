@@ -10,7 +10,8 @@ def createDataValue(varinfo):
         dtvFile = open(function + "_" + name + "_dataValue.sh", "w")
         dtvFile.write("#!/bin/sh \n")
         for line in lines:
-            dtvFile.write("break " + line + "\n")
+            intLine = int(line) + 1
+            dtvFile.write("break " + str(intLine) + "\n")
         dtvFile.write("start \n continue")
         for line in range(len(lines)):
             dtvFile.write("\n print " + name + "\n continue" )
